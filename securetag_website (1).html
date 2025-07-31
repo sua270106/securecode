@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureTag - Smart Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .shield-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .get-started-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .get-started-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Dev Banner */
+        .dev-banner {
+            background: #1e40af;
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero-highlight {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .try-demo-btn {
+            background: #10b981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .try-demo-btn:hover {
+            background: #059669;
+        }
+
+        .demo-input {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 200px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .qr-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .shield-icon-feature { background: linear-gradient(135deg, #10b981, #059669); }
+        .return-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .analytics-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .cloud-icon { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .mobile-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Demo Section */
+        .demo-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .demo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #1e293b;
+        }
+
+        .qr-code {
+            width: 120px;
+            height: 120px;
+            background: #1e293b;
+            margin: 0 auto 2rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .qr-pattern {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background-image: 
+                repeating-linear-gradient(0deg, #fff 0px, #fff 4px, transparent 4px, transparent 8px),
+                repeating-linear-gradient(90deg, #fff 0px, #fff 4px, transparent 4px, transparent 8px);
+        }
+
+        .nfc-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .nfc-waves {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .demo-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .simulate-btn {
+            background: #06b6d4;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .simulate-btn:hover {
+            background: #0891b2;
+        }
+
+        /* Product Info */
+        .product-info {
+            padding: 3rem 2rem;
+            background: #f8fafc;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .auth-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .date-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .location-icon { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+        .info-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .info-item p {
+            color: #64748b;
+        }
+
+        .verified {
+            color: #10b981;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .contact-info p {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .email-icon { background: #3b82f6; }
+        .phone-icon { background: #10b981; }
+        .address-icon { background: #06b6d4; }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .send-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand p {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Development Banner -->
+    <div class="dev-banner">
+        This is a temporary development preview, and these links are not for public use. Deploy your app for secure sharing or use an invite link.
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="shield-icon">🛡️</div>
+                SecureTag
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="get-started-btn">Get Started</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Smart Authentication with <span class="hero-highlight">NFC & QR</span></h1>
+            <p>Protect your products with tamper-evident SecureTags powered by advanced NFC and QR technology. Instant verification, maximum security.</p>
+            <div class="hero-buttons">
+                <button class="try-demo-btn">▶ Try Demo</button>
+                <input type="text" class="demo-input" placeholder="Enter demo code...">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">Advanced security features designed to protect your products and verify authenticity</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon qr-icon">📱</div>
+                    <h3>QR & NFC Tags</h3>
+                    <p>Instant authenticity verification using mobile devices. Scan QR codes or tap NFC tags for immediate product validation.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon shield-icon-feature">🛡️</div>
+                    <h3>Tamper Evident</h3>
+                    <p>Advanced tamper-evident technology embedded directly into products, preventing unauthorized reuse or manipulation.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon return-icon">🔄</div>
+                    <h3>Return Verification</h3>
+                    <p>Streamline return processes with instant product status verification, reducing fraud and improving customer experience.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon analytics-icon">📊</div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Real-time insights into product verification patterns, geographic distribution, and security metrics.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon cloud-icon">☁️</div>
+                    <h3>Cloud Integration</h3>
+                    <p>Seamless cloud-based verification system with real-time updates and enterprise-grade security protocols.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon mobile-icon">📱</div>
+                    <h3>Mobile App</h3>
+                    <p>Dedicated mobile application for consumers and businesses to verify products quickly and efficiently.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section" id="demo">
+        <div class="container">
+            <h2 class="section-title">See It In Action</h2>
+            <p class="section-subtitle">Experience our verification technology with interactive demos</p>
+            
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>QR Code Scanner</h3>
+                    <div class="qr-code">
+                        <div class="qr-pattern"></div>
+                    </div>
+                    <div class="demo-buttons">
+                        <button class="demo-btn active">QR Scanner</button>
+                        <button class="demo-btn">Basic Camera</button>
+                        <button class="demo-btn">Demo</button>
+                        <button class="demo-btn">Check Permissions</button>
+                    </div>
+                </div>
+                
+                <div class="demo-card">
+                    <h3>NFC Tag Verification</h3>
+                    <div class="nfc-circle">
+                        <div class="nfc-waves"></div>
+                        📡
+                    </div>
+                    <button class="simulate-btn">📡 Simulate Tap</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Information -->
+    <section class="product-info">
+        <div class="container">
+            <h2 class="section-title">Product Information</h2>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon auth-icon">🛡️</div>
+                    <h4>Authenticity Status</h4>
+                    <p class="verified">✓ Verified Authentic</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon date-icon">📅</div>
+                    <h4>Manufacturing Date</h4>
+                    <p>January 15, 2025</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon location-icon">📍</div>
+                    <h4>Origin</h4>
+                    <p>Karnataka, India</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p>Ready to secure your products with SecureTag? Contact us for a personalized demonstration and implementation plan.</p>
+                
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <div class="contact-icon email-icon">📧</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>securetag6@gmail.com</p>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon address-icon">📍</div>
+                        <div>
+                            <h4>Address</h4>
+                            <p>Bangalore, India</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form class="contact-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" placeholder="" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" placeholder="" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" placeholder="Your Company">
+                </div>
+                
+                <div class="form-group">
+                    <label>Message *</label>
+                    <textarea placeholder="Tell us about your security needs..." required></textarea>
+                </div>
+                
+                <button type="submit" class="send-btn">📧 Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <div class="shield-icon">🛡️</div>
+                    SecureTag
+                </div>
+                <p>Advanced authentication technology protecting products worldwide through innovative NFC and QR solutions.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Product</h4>
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
+                <a href="#">API Docs</a>
+                <a href="#">Integration</a>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 SecureTag - Built with passion by Team Pentacode. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Demo button interactions
+        document.querySelectorAll('.demo-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Form submission
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We\'ll get back to you soon.');
+        });
+
+        // Try Demo button
+        document.querySelector('.try-demo-btn').addEventListener('click', function() {
+            document.querySelector('#demo').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+
+        // Simulate NFC tap
+        document.querySelector('.simulate-btn').addEventListener('click', function() {
+            const circle = document.querySelector('.nfc-circle');
+            circle.style.transform = 'scale(1.1)';
+            circle.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            
+            setTimeout(() => {
+                circle.style.transform = 'scale(1)';
+                circle.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+                alert('NFC Tag Verified! Product authenticated successfully.');
+            }, 200);
+        });
+    </script>
+</body>
+</html>
